@@ -13,31 +13,18 @@
     fd
     tree
     fzf
-
+    tmux
     # add desktop programs  
+    google-chrome
+
+    # programming languages
+    go
+    gopls
+    rustup
   ];
 
   programs.git = {
     enable = true;
-    userName = "Pradeep Gowda";
-    userEmail = "pradeep@btbytes.com";
-    aliases = {
-      ci = "commit";
-      co = "checkout";
-      s = "status";
-      st = "status -sb";
-      lg = "log --oneline --graph --decorate --all";
-    };
-
-    extraConfig = {
-      init.defaultBranch = "main";
-      pull.rebase = true;
-      push.autoSetupRemote = true;
-      core = {
-        editor = "vim";
-        whitespace = "trailing-whitespace,space-before-tab";
-      };
-    };
     ignores = [
       ".DS_Store"
       "*.swp"
@@ -46,6 +33,28 @@
       ".direnv/"
     ];
 
+    settings = {
+      user = {
+        name = "Pradeep Gowda";
+        email = "pradeep@btbytes.com";
+      };
+
+      alias = {
+        ci = "commit";
+        co = "checkout";
+        s = "status";
+        st = "status -sb";
+        lg = "log --oneline --graph --decorate --all";
+      };
+
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+      core = {
+        editor = "vim";
+        whitespace = "trailing-whitespace,space-before-tab";
+      };
+    };
   };
 
 
