@@ -86,11 +86,13 @@
     isNormalUser = true;
     description = "Pradeep Gowda";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.zsh;
     packages = with pkgs; [
       kdePackages.kate
     #  thunderbird
     ];
   };
+
 
   # Install firefox.
   programs.firefox.enable = true;
