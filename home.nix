@@ -16,11 +16,15 @@
     tmux
     # add desktop programs  
     google-chrome
+    zed-editor
 
     # programming languages
     go
     gopls
     rustup
+
+    # devenv
+    devenv
   ];
 
   programs.git = {
@@ -64,6 +68,11 @@
       ll = "ls -la";
       rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#nixos";
     };
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
   };
 
   programs.home-manager.enable = true;
