@@ -7,6 +7,7 @@
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
+    bubblewrap
     c3c
     devenv
     dotnet-sdk_10
@@ -15,6 +16,7 @@
     factor-lang
     fastfetch
     fd
+    fsharp
     fzf
     gh
     ghostty
@@ -26,6 +28,9 @@
     jq
     kitty
     odin
+    opencode
+    nim
+    nimble
     nix-index
     qtcreator
     quickshell
