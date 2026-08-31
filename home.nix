@@ -21,6 +21,31 @@
     enable = true;
     userName = "Pradeep Gowda";
     userEmail = "pradeep@btbytes.com";
+    aliases = {
+      ci = "commit";
+      co = "checkout";
+      s = "status";
+      st = "status -sb";
+      lg = "log --oneline --graph --decorate --all";
+    };
+
+    extraConfig = {
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+      core = {
+        editor = "vim";
+        whitespace = "trailing-whitespace,space-before-tab";
+      };
+    };
+    ignores = [
+      ".DS_Store"
+      "*.swp"
+      "*~"
+      "*.pyc"
+      ".direnv/"
+    ];
+
   };
 
 
