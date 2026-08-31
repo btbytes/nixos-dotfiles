@@ -22,6 +22,7 @@
     go
     gopls
     rustup
+    dmd
 
     # devenv
     devenv
