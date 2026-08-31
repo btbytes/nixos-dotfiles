@@ -7,25 +7,31 @@
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
-    htop
-    fastfetch
-    ripgrep
-    fd
-    tree
-    fzf
-    tmux
-    # add desktop programs  
-    google-chrome
-    zed-editor
-
-    # programming languages
-    go
-    gopls
-    rustup
-    dmd
-
-    # devenv
     devenv
+    dmd
+    emacs
+    fastfetch
+    fd
+    fzf
+    gh
+    go
+    google-chrome
+    gopls
+    htop
+    jdk25
+    jq
+    nix-index
+    ripgrep
+    rustup
+    sbcl
+    scala
+    sublime4
+    tmux
+    tree
+    unzip
+    uv
+    vscode
+    zed-editor
   ];
 
   programs.git = {
