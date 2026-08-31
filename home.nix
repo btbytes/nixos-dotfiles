@@ -7,25 +7,32 @@
   home.stateVersion = "26.05";
 
   home.packages = with pkgs; [
+    c3c
     devenv
+    dotnet-sdk_10
     dmd
     emacs
+    factor-lang
     fastfetch
     fd
     fzf
     gh
+    ghostty
     go
     google-chrome
     gopls
     htop
     jdk25
     jq
+    kitty
+    odin
     nix-index
+    qtcreator
+    quickshell
     ripgrep
     rustup
     sbcl
     scala
-    sublime4
     tmux
     tree
     unzip
