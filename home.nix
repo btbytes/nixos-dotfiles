@@ -11,7 +11,7 @@
     devenv
     dotnet-sdk_10
     dmd
-    emacs
+    emacs-pgtk
     factor-lang
     fastfetch
     fd
@@ -104,6 +104,8 @@
 
     # Shell aliases
     shellAliases = {
+      e = "emacsclient -c -a ''";
+      et = "emacsclient -t";
       ll = "ls -la";
       rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#nixos";
     };
@@ -115,5 +117,12 @@
   };
 
   programs.home-manager.enable = true;
+
+
+  services.emacs = {
+    enable = true;
+    package = pkgs.emacs-pgtk;
+    startWithUserSession = "graphical";
+  };
 }
 
