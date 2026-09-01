@@ -39,10 +39,10 @@ in
   # = true` at a time (hyprland / niri / gnome / plasma-with-X11).
   # ----------------------------------------------------------------------
   ghosttyModule.enable = true;
-  gnomeModule.enable = true;
+  gnomeModule.enable = false;
   hyprlandModule.enable = false;
-  niriModule.enable = false;
-  noctaliaModule.enable = false;
+  niriModule.enable = true;
+  noctaliaModule.enable = true;
   vesktopModule.enable = true;
   nhModule.enable = true;
 
