@@ -27,6 +27,7 @@ in
     ./homeModules/vesktop
     ./homeModules/nh
     ./homeModules/nodejs
+    ./homeModules/nixd
   ];
 
   home.username = my.username;
@@ -45,6 +46,7 @@ in
   noctaliaModule.enable = true;
   vesktopModule.enable = true;
   nhModule.enable = true;
+  nixdModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [
