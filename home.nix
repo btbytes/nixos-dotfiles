@@ -7,7 +7,7 @@
 #     hooks, completions and config are wired up automatically).
 #   - Keep shared shell aliases in one place and reference from both bash/zsh.
 #   - Prefer idiomatic CLI tools (eza, bat, zoxide) configured via modules.
-{ config, pkgs, ... }:
+{ config, pkgs, my, ... }:
 
 let
   # Aliases shared by bash and zsh.
@@ -17,9 +17,34 @@ let
   };
 in
 {
-  home.username = "pradeep";
-  home.homeDirectory = "/home/pradeep";
+  imports = [
+    # Central, user-specific settings (see config.nix → `my`).
+    ./homeModules/ghostty
+    ./homeModules/gnome
+    ./homeModules/hyprland
+    ./homeModules/niri
+    ./homeModules/noctalia
+    ./homeModules/vesktop
+    ./homeModules/nh
+    ./homeModules/nodejs
+  ];
+
+  home.username = my.username;
+  home.homeDirectory = my.homeDirectory;
   home.stateVersion = "26.05";
+
+  # ----------------------------------------------------------------------
+  # Feature toggles — flip these to enable/disable a module.
+  # Desktop environments are mutually exclusive, so keep only one `.enable
+  # = true` at a time (hyprland / niri / gnome / plasma-with-X11).
+  # ----------------------------------------------------------------------
+  ghosttyModule.enable = true;
+  gnomeModule.enable = true;
+  hyprlandModule.enable = false;
+  niriModule.enable = false;
+  noctaliaModule.enable = false;
+  vesktopModule.enable = true;
+  nhModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [
