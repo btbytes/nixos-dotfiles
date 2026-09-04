@@ -14,7 +14,13 @@
 
     # ~/.config/ghostty/config
     xdg.configFile."ghostty/config".text = ''
-      font-family = "FiraCode Nerd Font", "Symbols-Only Nerd Font"
+      font-family = FiraCode Nerd Font
+      font-family-bold = FiraCode Nerd Font
+      font-family-italic = FiraCode Nerd Font
+      font-family-bold-italic = FiraCode Nerd Font
+
+      # Nerd Font symbol/icon fallback
+      font-family = Symbols Nerd Font
 
       font-size = 12
 

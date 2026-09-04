@@ -141,7 +141,6 @@ in
   programs.tmux = {
     enable = true;
     newSession = true;
-    shortcut = "a";
   };
 
   programs.git = {

@@ -124,6 +124,12 @@
   # };
   programs.zsh.enable = true;
 
+  fonts.packages = with pkgs; [
+    fira-code
+    nerd-fonts.fira-code
+    nerd-fonts.symbols-only
+  ];
+
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
