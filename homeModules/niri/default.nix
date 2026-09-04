@@ -31,6 +31,7 @@ in
   config = lib.mkIf config.niriModule.enable {
 
     home.packages = with pkgs; [
+      adwaita-icon-theme
       brightnessctl
       grim
       slurp
@@ -38,6 +39,24 @@ in
       xwayland-satellite
       wl-gammarelay-rs
     ];
+
+    home.file."screenshots/.keep".text = "";
+
+    gtk = {
+      enable = true;
+      iconTheme = {
+        name = "Adwaita";
+        package = pkgs.adwaita-icon-theme;
+      };
+    };
+
+    dconf.settings."org/gnome/desktop/interface".icon-theme = "Adwaita";
+
+    xdg.configFile."swappy/config".text = ''
+      [Default]
+      save_dir=${config.home.homeDirectory}/screenshots
+      save_filename_format=swappy-%Y%m%d-%H%M%S.png
+    '';
 
     xdg.configFile."niri/config.kdl".text = ''
       input {
@@ -114,7 +133,9 @@ in
         Mod+Shift+K { move-window-up; }
         Mod+Shift+J { move-window-down; }
 
-        Mod+Shift+S { spawn "sh" "-c" "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.swappy}/bin/swappy -f -"; }
+        // Screenshots on Print keys (whole screen on Print, region on Shift+Print)
+        Print { spawn "sh" "-c" "${pkgs.grim}/bin/grim - | ${pkgs.swappy}/bin/swappy -f -"; }
+        Shift+Print { spawn "sh" "-c" "${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.swappy}/bin/swappy -f -"; }
 
         Mod+Shift+N { spawn "busctl" "--user" "set-property" "rs.wl-gammarelay" "/" "rs.wl.gammarelay" "Brightness" "d" "0.3"; }
         Mod+Shift+M { spawn "busctl" "--user" "set-property" "rs.wl-gammarelay" "/" "rs.wl.gammarelay" "Brightness" "d" "1.0"; }
