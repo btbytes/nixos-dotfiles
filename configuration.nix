@@ -133,7 +133,27 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      PermitRootLogin = "no";
+      # Keep password auth on for now so you don't lock yourself out
+      # before key auth is verified. Set to false later for hardening.
+      PasswordAuthentication = true;
+    };
+  };
+
+  # Allow key-based login for pradeep (uses existing ~/.ssh/id_ed25519.pub).
+  users.users."pradeep".openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBSieB/wU+AVUhjnrtocMdY49SK1OBQGPE0LxeaGV4hX pradeep@nixos"
+  ];
+
+  # Tailscale VPN.
+  services.tailscale = {
+    enable = true;
+    openFirewall = true; # opens UDP 41641, sets reverse-path to loose as needed
+  };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

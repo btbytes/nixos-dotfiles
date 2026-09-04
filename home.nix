@@ -63,7 +63,9 @@ in
     google-chrome
     gopls
     jdk25
+    janet
     kitty
+    luau
     nim
     nimble
     nixfmt
@@ -76,6 +78,7 @@ in
     scala
     tmux
     tree
+    typst
     unzip
     uv
     vscode
