@@ -13,7 +13,7 @@ let
   # Aliases shared by bash and zsh.
   shellAliases = {
     ll = "ls -la";
-    rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#nixos";
+    rebuild = "sudo nixos-rebuild switch --flake ~/dotfiles#aihole";
   };
 in
 {
@@ -28,6 +28,7 @@ in
     ./homeModules/nh
     ./homeModules/nodejs
     ./homeModules/nixd
+    ./homeModules/doom
   ];
 
   home.username = my.username;
@@ -47,6 +48,7 @@ in
   vesktopModule.enable = true;
   nhModule.enable = true;
   nixdModule.enable = true;
+  doomModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [
@@ -55,7 +57,6 @@ in
     devenv
     dotnet-sdk_10
     dmd
-    emacs-pgtk
     factor-lang
     fsharp
     ghostty
@@ -183,9 +184,10 @@ in
   # ----------------------------------------------------------------------
   # Services
   # ----------------------------------------------------------------------
+  # Emacs daemon serves the Nix-built Doom Emacs (see homeModules/doom:
+  # programs.doom-emacs sets services.emacs.package automatically).
   services.emacs = {
     enable = true;
-    package = pkgs.emacs-pgtk;
     startWithUserSession = "graphical";
   };
 
