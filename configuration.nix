@@ -50,11 +50,32 @@
   # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
-  services.displayManager.gdm.enable = true;
+  # GDM replaced by greetd + ReGreet below. The GNOME session itself stays
+  # installed and selectable from the ReGreet session menu.
+  services.displayManager.gdm.enable = false;
+
+  # Enable the GNOME Desktop Environment (session stays available in ReGreet).
   services.desktopManager.gnome.enable = true;
 
-  # Niri Wayland compositor (selectable as a session in GDM).
+  # Login screen: ReGreet (runs on cage via greetd) with a dark theme that
+  # matches the Tokyo Night desktop. Background lives in ./assets so the
+  # greeter works offline and rebuilds stay hermetic.
+  services.displayManager.regreet = {
+    enable = true;
+    theme = { package = pkgs.adw-gtk3; name = "adw-gtk3-dark"; };
+    iconTheme = { package = pkgs.papirus-icon-theme; name = "Papirus-Dark"; };
+    cursorTheme = { package = pkgs.bibata-cursors; name = "Bibata-Modern-Classic"; };
+    font = { package = pkgs.fira-sans; name = "Fira Sans"; size = 12; };
+    settings = {
+      background = {
+        path = ./assets/regreet-background.png;
+        fit = "Cover";
+      };
+      appearance.greeting_msg = "Welcome back";
+    };
+  };
+
+  # Niri Wayland compositor (selectable as a session in ReGreet).
   programs.niri.enable = true;
 
   # Configure keymap in X11
@@ -126,6 +147,7 @@
 
   fonts.packages = with pkgs; [
     fira-code
+    fira-sans
     nerd-fonts.fira-code
     nerd-fonts.symbols-only
   ];

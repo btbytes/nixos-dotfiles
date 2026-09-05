@@ -29,6 +29,7 @@ in
     ./homeModules/nodejs
     ./homeModules/nixd
     ./homeModules/doom
+    ./homeModules/idle
   ];
 
   home.username = my.username;
@@ -49,6 +50,7 @@ in
   nhModule.enable = true;
   nixdModule.enable = true;
   doomModule.enable = true;
+  idleModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [
@@ -145,6 +147,8 @@ in
   programs.tmux = {
     enable = true;
     newSession = true;
+    # Explicit: an old `shortcut = "a"` once set C-a here; default is C-b.
+    prefix = "C-b";
   };
 
   programs.git = {

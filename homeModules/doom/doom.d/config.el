@@ -7,8 +7,8 @@
 ;; Doom theme + fonts. Fira Code is installed system-wide (see
 ;; configuration.nix `fonts.packages'); adjust the size to taste.
 (setq doom-theme 'doom-one
-      doom-font (font-spec :family "Fira Code" :size 13)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13))
+      doom-font (font-spec :family "Fira Code" :size 16)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 16))
 
 ;; Line numbers on for code, off for text.
 (setq display-line-numbers-type 'relative)
