@@ -77,6 +77,11 @@ in
         control-center = [ "<Super>i" ];
       };
 
+      # US English + Kannada (itrans phonetic); switch with <Super>space.
+      "org/gnome/desktop/input-sources" = {
+        sources = [ (mkTuple [ "xkb" "us" ]) (mkTuple [ "ibus" "m17n:kn:itrans" ]) ];
+      };
+
       "org/gnome/shell/extensions/pop-shell" = {
         active-hint = true;
         hint-color-rgba = "rgba(255, 255, 255, 1.0)";

@@ -66,6 +66,10 @@ in
 
     dconf.settings."org/gnome/desktop/interface".icon-theme = "Adwaita";
 
+    # IBus engines, US first so it stays the default on login.
+    dconf.settings."org/freedesktop/ibus/general".preload-engines =
+      [ "xkb:us::eng" "m17n:kn:itrans" ];
+
     xdg.configFile."swappy/config".text = ''
       [Default]
       save_dir=${config.home.homeDirectory}/screenshots
@@ -106,6 +110,7 @@ in
       spawn-at-startup "xwayland-satellite";
       spawn-at-startup "wl-gammarelay-rs" "run";
       spawn-at-startup "noctalia-shell";
+      spawn-at-startup "${pkgs.ibus}/bin/ibus-daemon" "-drxR";
       spawn-at-startup "${randomWallpaper}";
 
       binds {
@@ -126,6 +131,9 @@ in
 
         // Lock Screen
         Mod+Ctrl+L { ${noctalia "lockScreen" "lock"} }
+
+        // Input language: US English <-> Kannada (phonetic)
+        Mod+Shift+Space { spawn "toggle-keyboard-layout"; }
 
         // --- AUDIO CONTROLS ---
         XF86AudioRaiseVolume { ${noctalia "volume" "increase"} }

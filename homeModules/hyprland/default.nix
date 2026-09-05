@@ -28,6 +28,10 @@ in
 
   config = lib.mkIf config.hyprlandModule.enable {
 
+    # IBus engines, US first so it stays the default on login.
+    dconf.settings."org/freedesktop/ibus/general".preload-engines =
+      [ "xkb:us::eng" "m17n:kn:itrans" ];
+
     home.packages = with pkgs; [
       brightnessctl
       hyprpaper
@@ -153,6 +157,8 @@ in
         hl.bind(mod .. " + Space", hl.dsp.exec_cmd([[${noctalia "launcher" "toggle"}]]))
         hl.bind(mod .. " + SHIFT + E", hl.dsp.exec_cmd([[${noctalia "sessionMenu" "toggle"}]]))
         hl.bind(mod .. " + CTRL + L", hl.dsp.exec_cmd([[${noctalia "lockScreen" "lock"}]]))
+        -- Input language: US English <-> Kannada (phonetic)
+        hl.bind(mod .. " + SHIFT + Space", hl.dsp.exec_cmd("toggle-keyboard-layout"))
 
         hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
 
@@ -213,6 +219,7 @@ in
           hl.exec_cmd("wl-paste --type text --watch cliphist store")
           hl.exec_cmd("wl-paste --type image --watch cliphist store")
           hl.exec_cmd("noctalia-shell")
+          hl.exec_cmd("${pkgs.ibus}/bin/ibus-daemon -drxR")
         end)
       '';
     };

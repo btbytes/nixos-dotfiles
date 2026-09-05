@@ -46,6 +46,16 @@
     LC_TIME = "en_US.UTF-8";
   };
 
+  # Input method: IBus + m17n (Kannada itrans = phonetic transliteration).
+  # Niri/Hyprland start ibus-daemon and toggle US/Kannada via Mod+Shift+Space
+  # (see homeModules/niri + homeModules/hyprland); GNOME uses its native
+  # input sources instead (see homeModules/gnome).
+  i18n.inputMethod = {
+    enable = true;
+    type = "ibus";
+    ibus.engines = with pkgs.ibus-engines; [ m17n ];
+  };
+
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.
   services.xserver.enable = true;
@@ -134,6 +144,21 @@
     pciutils
     usbutils
     python3
+    # Toggles US English <-> Kannada (itrans phonetic) IBus engine.
+    # Bound to Mod+Shift+Space in Niri/Hyprland.
+    (writeShellScriptBin "toggle-keyboard-layout" ''
+      current=$(${pkgs.ibus}/bin/ibus engine 2>/dev/null)
+      if [ "$current" = "m17n:kn:itrans" ]; then
+        ${pkgs.ibus}/bin/ibus engine xkb:us::eng
+        label="US English"
+      else
+        ${pkgs.ibus}/bin/ibus engine m17n:kn:itrans
+        label="Kannada (phonetic)"
+      fi
+      if command -v noctalia-shell >/dev/null 2>&1; then
+        noctalia-shell ipc call toast send "{\"title\":\"Keyboard\",\"body\":\"$label\",\"icon\":\"input-keyboard\",\"duration\":1500}" || true
+      fi
+    '')
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -150,6 +175,9 @@
     fira-sans
     nerd-fonts.fira-code
     nerd-fonts.symbols-only
+    # Kannada shaping (Noto Sans/Serif Kannada); without this fc-match
+    # falls back to DejaVu/Unifont and conjuncts/ottaks render broken.
+    noto-fonts
   ];
 
   # List services that you want to enable:
