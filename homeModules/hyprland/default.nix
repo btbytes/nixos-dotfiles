@@ -222,7 +222,8 @@ in
           hl.exec_cmd("wl-paste --type text --watch cliphist store")
           hl.exec_cmd("wl-paste --type image --watch cliphist store")
           hl.exec_cmd("noctalia-shell")
-          hl.exec_cmd("${pkgs.ibus}/bin/ibus-daemon -drxR")
+          -- No manual ibus-daemon: NixOS XDG autostart / D-Bus activation
+          -- starts a single daemon (see niri module for why two hurts).
         end)
       '';
     };

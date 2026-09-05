@@ -110,7 +110,9 @@ in
       spawn-at-startup "xwayland-satellite";
       spawn-at-startup "wl-gammarelay-rs" "run";
       spawn-at-startup "noctalia-shell";
-      spawn-at-startup "${pkgs.ibus}/bin/ibus-daemon" "-drxR";
+      // No manual ibus-daemon: NixOS XDG autostart / D-Bus activation
+      // starts a single daemon. A second manual daemon fights it for
+      // org.freedesktop.IBus and breaks Wayland text-input clients.
       spawn-at-startup "${randomWallpaper}";
 
       binds {

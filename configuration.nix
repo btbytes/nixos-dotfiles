@@ -57,7 +57,16 @@
     enable = true;
     type = "ibus";
     ibus.engines = with pkgs.ibus-engines; [ m17n ];
+    # Wayland frontend: Wayland-native apps (Zed, Chrome, Ghostty) take
+    # input via text-input-v3/input-method-v2 (both exposed by Niri)
+    # instead of the GTK/QT IM modules. This leaves GTK_IM_MODULE and
+    # QT_IM_MODULE unset; XMODIFIERS stays for XWayland/XIM clients.
+    ibus.waylandFrontend = true;
   };
+
+  # Tells NixOS wrappers (Chrome, Electron apps) to prefer Wayland ozone,
+  # which also adds Chrome's --enable-wayland-ime flag under Wayland.
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # Enable the X11 windowing system.
   # You can disable this if you're only using the Wayland session.

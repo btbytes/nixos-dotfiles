@@ -63,7 +63,12 @@ in
     fsharp
     ghostty
     go
-    google-chrome
+    # Wayland text-input-v3 for IBus IME (Kannada); --enable-wayland-ime
+    # itself comes from the wrapper when NIXOS_OZONE_WL=1 (see
+    # configuration.nix).
+    (google-chrome.override {
+      commandLineArgs = "--wayland-text-input-version=3";
+    })
     gopls
     jdk25
     janet
