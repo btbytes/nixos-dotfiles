@@ -35,6 +35,10 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            # Back up (don't fail on) pre-existing dotfiles HM wants to
+            # manage (e.g. Plasma-written gtk-3.0/4.0 settings.ini); without
+            # this a single clobber aborts the whole home activation.
+            home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = {
               inherit inputs;
               my = import ./config.nix;

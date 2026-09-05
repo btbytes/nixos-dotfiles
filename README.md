@@ -12,7 +12,7 @@ rebuild   # sudo nixos-rebuild switch --flake ~/dotfiles#aihole
 
 | Path | Why it exists |
 |---|---|
-| `flake.nix` | Inputs (`nixpkgs`, `home-manager`, `noctalia`, `nix-doom-emacs-unstraightened`) and the single `nixosConfigurations.aihole` output. |
+| `flake.nix` | Inputs (`nixpkgs`, `home-manager`, `noctalia`, `nix-doom-emacs-unstraightened`) and the single `nixosConfigurations.aihole` output. Sets `home-manager.backupFileExtension = "backup"` so stale dotfiles (e.g. Plasma-written GTK settings) are backed up instead of aborting home activation. |
 | `config.nix` | The `my` attrset: username, home dir, terminal/browser/file-manager, cursor, Obsidian vault. One place for user-specific values shared by all modules. |
 | `configuration.nix` | System level: bootloader, locale/timezone, greetd + ReGreet login (no background image — static images freeze ReGreet 0.5.0 via GStreamer fallback, nixpkgs#557002), GNOME/Niri sessions, audio (PipeWire), fonts (Fira + Noto incl. Kannada), IBus (US + Kannada itrans phonetic via `toggle-keyboard-layout`), OpenSSH, Tailscale, user account, system packages. |
 | `assets/` | Retained ReGreet login background (`regreet-background.png`), currently unused — re-enable once upstream fixes the static-image freeze. |
