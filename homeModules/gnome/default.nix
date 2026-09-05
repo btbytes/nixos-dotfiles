@@ -69,6 +69,10 @@ in
         switch-to-workspace-8 = [ "<Super>8" ];
         switch-to-workspace-9 = [ "<Super>9" ];
         switch-to-workspace-10 = [ "<Super>0" ];
+        # F11 mirrors the Niri/Hyprland layout toggle (native GNOME OSD
+        # shows the new source on switch).
+        switch-input-source = [ "<Super>space" "F11" ];
+        switch-input-source-backward = [ "<Super><Shift>space" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {

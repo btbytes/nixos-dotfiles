@@ -157,8 +157,11 @@ in
         hl.bind(mod .. " + Space", hl.dsp.exec_cmd([[${noctalia "launcher" "toggle"}]]))
         hl.bind(mod .. " + SHIFT + E", hl.dsp.exec_cmd([[${noctalia "sessionMenu" "toggle"}]]))
         hl.bind(mod .. " + CTRL + L", hl.dsp.exec_cmd([[${noctalia "lockScreen" "lock"}]]))
-        -- Input language: US English <-> Kannada (phonetic)
+        -- Input language: US English <-> Kannada (phonetic).
+        -- F11 is the primary toggle (Mod+Shift+Space is unreliable); the
+        -- toggle script sends a Noctalia toast with the new layout.
         hl.bind(mod .. " + SHIFT + Space", hl.dsp.exec_cmd("toggle-keyboard-layout"))
+        hl.bind("F11", hl.dsp.exec_cmd("toggle-keyboard-layout"))
 
         hl.bind(mod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region"))
 

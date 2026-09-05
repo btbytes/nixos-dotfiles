@@ -132,8 +132,12 @@ in
         // Lock Screen
         Mod+Ctrl+L { ${noctalia "lockScreen" "lock"} }
 
-        // Input language: US English <-> Kannada (phonetic)
+        // Input language: US English <-> Kannada (phonetic).
+        // F11 is the primary toggle (Mod+Shift+Space is unreliable — Shift+Space
+        // still yields a Space keysym, so the compositor often never matches it).
+        // toggle-keyboard-layout sends a Noctalia toast with the new layout.
         Mod+Shift+Space { spawn "toggle-keyboard-layout"; }
+        F11 { spawn "toggle-keyboard-layout"; }
 
         // --- AUDIO CONTROLS ---
         XF86AudioRaiseVolume { ${noctalia "volume" "increase"} }

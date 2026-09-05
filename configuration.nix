@@ -48,9 +48,11 @@
   };
 
   # Input method: IBus + m17n (Kannada itrans = phonetic transliteration).
-  # Niri/Hyprland start ibus-daemon and toggle US/Kannada via Mod+Shift+Space
-  # (see homeModules/niri + homeModules/hyprland); GNOME uses its native
-  # input sources instead (see homeModules/gnome).
+  # Niri/Hyprland start ibus-daemon and toggle US/Kannada via F11
+  # (Mod+Shift+Space kept as fallback; see homeModules/niri +
+  # homeModules/hyprland); GNOME uses its native input sources instead
+  # (see homeModules/gnome). toggle-keyboard-layout posts a Noctalia toast
+  # with the new layout.
   i18n.inputMethod = {
     enable = true;
     type = "ibus";
@@ -144,7 +146,7 @@
     usbutils
     python3
     # Toggles US English <-> Kannada (itrans phonetic) IBus engine.
-    # Bound to Mod+Shift+Space in Niri/Hyprland.
+    # Bound to F11 (plus Mod+Shift+Space fallback) in Niri/Hyprland.
     (writeShellScriptBin "toggle-keyboard-layout" ''
       current=$(${pkgs.ibus}/bin/ibus engine 2>/dev/null)
       if [ "$current" = "m17n:kn:itrans" ]; then
