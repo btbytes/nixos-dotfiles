@@ -24,6 +24,20 @@ let
 
   noctalia =
     action: cmd: "spawn \"noctalia-shell\" \"ipc\" \"call\" \"" + action + "\" \"" + cmd + "\";";
+
+  # Picks a different wallpaper at random (no immediate repeats — Noctalia
+  # tracks the cycle in ~/.cache/noctalia/wallpapers.json) from
+  # ~/Pictures/Wallpapers on every Niri session start. Retries while
+  # noctalia-shell is still coming up.
+  randomWallpaper = pkgs.writeShellScript "niri-random-wallpaper" ''
+    for i in $(seq 1 30); do
+      if noctalia-shell ipc call wallpaper random "all" 2>/dev/null; then
+        exit 0
+      fi
+      sleep 1
+    done
+    exit 1
+  '';
 in
 {
   options.niriModule.enable = lib.mkEnableOption "Enable Niri Module";
@@ -88,6 +102,7 @@ in
       spawn-at-startup "xwayland-satellite";
       spawn-at-startup "wl-gammarelay-rs" "run";
       spawn-at-startup "noctalia-shell";
+      spawn-at-startup "${randomWallpaper}";
 
       binds {
         Mod+Q { close-window; }

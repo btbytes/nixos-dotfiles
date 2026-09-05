@@ -47,10 +47,10 @@ Desktops are mutually exclusive — keep exactly one of
 | Module | What it does | Why it exists as a module |
 |---|---|---|
 | `doom` | Declarative Doom Emacs via `nix-doom-emacs-unstraightened` (no `doom sync`, see below). | Doom needs its source, config, Emacs build, `$PATH` tools and fonts versioned together. |
-| `niri` | Niri scrollable-tiling session: `config.kdl`, Super-key binds, Noctalia IPC for launcher/volume/media, screenshots via grim+slurp+swappy, GTK/Adwaita theming. | Active desktop; binds reuse `my.terminal`/`my.browser` so switching apps touches one file. |
+| `niri` | Niri scrollable-tiling session: `config.kdl`, Super-key binds, Noctalia IPC for launcher/volume/media, random wallpaper from `~/Pictures/Wallpapers` on session start, screenshots via grim+slurp+swappy, GTK/Adwaita theming. | Active desktop; binds reuse `my.terminal`/`my.browser` so switching apps touches one file. |
 | `hyprland` | Alternative Hyprland setup (Lua-config syntax): monitors, master layout, animations, same Noctalia-integrated keymap as niri. | Drop-in desktop alternative; kept disabled but ready. |
 | `gnome` | GNOME via pop-shell tiling + extensions (caffeine, vitals, burn-my-windows, user-themes) and dconf keybinds mirroring the Super-key scheme. | Third desktop option with the same muscle memory. |
-| `noctalia` | Noctalia shell bar (top, compact, Tokyo Night), dock off, wallpaper via Wallhaven, clipboard history via cliphist. | Shared status bar / launcher / lock screen for the Wayland compositors. |
+| `noctalia` | Noctalia shell bar (top, compact, Tokyo Night), dock off, wallpaper from `~/Pictures/Wallpapers` in random mode (Wallhaven off), clipboard history via cliphist. | Shared status bar / launcher / lock screen for the Wayland compositors. |
 | `ghostty` | Ghostty terminal + `~/.config/ghostty/config` (FiraCode Nerd Font, Monokai Pro, borderless). | `my.terminal` points here, so all desktop binds open it. |
 | `vesktop` | Vesktop (Discord) with a copied (not symlinked) `settings.json` forcing Wayland/Electron-Ozone flags. `force = true` because the app rewrites this file. | Declarative Wayland flags that survive app restarts. |
 | `nixd` | `nixd` language server + `nixpkgs-fmt`, with `~/.config/nixd/config.json` pointing formatting at `nixpkgs-fmt`. | Editing this repo (and any Nix) with LSP + correct formatter. |

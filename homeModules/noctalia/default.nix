@@ -82,10 +82,11 @@
 
         wallpaper = {
           enabled = true;
-          useWallhaven = true;
-          wallhavenQuery = "landscape";
-          wallhavenCategories = "111";
-          wallhavenPurity = "100";
+          directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
+          wallpaperChangeMode = "random";
+          sortOrder = "random";
+          setWallpaperOnAllMonitors = true;
+          useWallhaven = false;
           fillMode = "crop";
         };
 
