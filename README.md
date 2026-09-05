@@ -73,6 +73,8 @@ Doom is built by Nix, not by `doom sync`:
 - `programs.doom-emacs` provides the `emacs` binary and sets
   `services.emacs.package` automatically — don't set an Emacs package in
   `home.nix` or you'll get a duplicate-definition error.
+- Spell checking (`:checkers (spell +flyspell)`) uses `ispell`, shipped via
+  `extraBinPackages` so it's on Doom's `$PATH` (`doom doctor` checks for it).
 - Keybinding style: Doom leader menus, **no evil** (`(default +bindings
   +smartparens)`, corfu + vertico completion, eglot LSP).
 

@@ -37,6 +37,7 @@
         shfmt
         nixfmt
         nixd
+        ispell
       ];
     };
 
