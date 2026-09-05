@@ -93,6 +93,10 @@ in
 
       prefer-no-csd
 
+      animations {
+        workspace-switch { off; }
+      }
+
       environment {
         DISPLAY ":0"
         XCURSOR_THEME "${cursorName}"
