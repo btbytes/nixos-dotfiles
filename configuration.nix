@@ -6,7 +6,8 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
+      # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
 
@@ -68,8 +69,10 @@
   services.desktopManager.gnome.enable = true;
 
   # Login screen: ReGreet (runs on cage via greetd) with a dark theme that
-  # matches the Tokyo Night desktop. Background lives in ./assets so the
-  # greeter works offline and rebuilds stay hermetic.
+  # matches the Tokyo Night desktop. No background image: ReGreet 0.5.0 falls
+  # back to GStreamer looping-video decode for static images (missing
+  # glycin-loaders/bwrap in the wrapper, nixpkgs#557002), which pins a core
+  # and freezes the login screen.
   services.displayManager.regreet = {
     enable = true;
     theme = { package = pkgs.adw-gtk3; name = "adw-gtk3-dark"; };
@@ -77,10 +80,6 @@
     cursorTheme = { package = pkgs.bibata-cursors; name = "Bibata-Modern-Classic"; };
     font = { package = pkgs.fira-sans; name = "Fira Sans"; size = 12; };
     settings = {
-      background = {
-        path = ./assets/regreet-background.png;
-        fit = "Cover";
-      };
       appearance.greeting_msg = "Welcome back";
     };
   };
@@ -123,7 +122,7 @@
     shell = pkgs.zsh;
     packages = with pkgs; [
       kdePackages.kate
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
