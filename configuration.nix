@@ -90,6 +90,11 @@
     iconTheme = { package = pkgs.papirus-icon-theme; name = "Papirus-Dark"; };
     cursorTheme = { package = pkgs.bibata-cursors; name = "Bibata-Modern-Classic"; };
     font = { package = pkgs.fira-sans; name = "Fira Sans"; size = 12; };
+    extraCss = ''
+      window.background {
+        background-color: #292929;
+      }
+    '';
     settings = {
       appearance.greeting_msg = "Welcome back";
     };
