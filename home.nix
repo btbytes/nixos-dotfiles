@@ -32,6 +32,7 @@ in
     ./homeModules/idle
     ./homeModules/llmfit
     ./homeModules/sglang
+    ./homeModules/omp
   ];
 
   home.username = my.username;
@@ -58,6 +59,9 @@ in
   # enable only when Ollama is unloaded (or shrink memFractionA/B). Setup:
   # sglang-bootstrap, smoke-test, then flip this to true and rebuild.
   sglangModule.enable = false;
+  # oh-my-pi agent (omp): needs `omp-bootstrap` once (bun global install)
+  # plus a running llama-server behind it.
+  ompModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [

@@ -59,6 +59,7 @@ Desktops are mutually exclusive — keep exactly one of
 | `idle` | `services.swayidle`: Noctalia lockscreen after 5 min idle + lock before sleep. | Screen locking on Niri, which has no built-in idle management. |
 | `llmfit` | `llmfit` from nixpkgs (right-sizes LLM models to your RAM/CPU/GPU; `llmfit` TUI, `llmfit fit`, `llmfit recommend`). | Single CLI tool with no config, kept toggleable like the other small modules. |
 | `sglang` | SGLang sidecar: `uv` venv + per-model servers (`:8001`/`:8002`, `--mem-fraction-static` VRAM splits) behind the SGLang router (`:30000`, OpenAI-compatible). Off by default — shares 32 GB VRAM with Ollama. | Max-throughput alternative to Ollama; nixpkgs has no `sglang` package, so it lives in a `uv` venv with pinned Blackwell (sm_120) wheels instead. |
+| `omp` | oh-my-pi (`omp`) coding agent: `omp-bootstrap` installs via Bun (no nixpkgs package), `~/.omp/agent/models.yml` declares the local llama-server as an OpenAI-compatible provider. | Agent harness kept toggleable; model routing is a config file, not a package. |
 
 `home.nix` directly manages the rest (no module warranted): bash/zsh
 (Oh-My-Zsh, shared aliases), direnv, fzf, fd, ripgrep, gh, htop, fastfetch,
@@ -82,12 +83,16 @@ llmfit --memory 32G recommend -n 10  # re-size picks once the driver is live
 ```
 
 `llama-server` (`services.llama-cpp` in `configuration.nix`,
-`http://100.101.214.127:8090`) runs Qwen3.8-Flash-Next from the unsloth
-UD-IQ1_S GGUF (~72.5 GB, the only quant fitting 62 GB RAM + 32 GB VRAM).
+`http://100.101.214.127:8090`) runs Qwen3.8-27B from the unsloth
+UD-Q6_K_M GGUF (~23.1 GB single file, full VRAM offload on 32 GB).
 nixpkgs' llama.cpp predates the `qwen4exp` architecture, so the service uses
-an upstream v0.4.0 CUDA build. Setup: `sudo qwen38-download`, then
+an upstream v0.4.0 CUDA build. Setup: `sudo qwen38-27b-download`, then
 `sudo systemctl stop ollama && sudo systemctl start llama-cpp` (the Ollama
 stack must be unloaded — the two don't fit in VRAM together).
+
+`omp` (`homeModules/omp`) drives that server: `omp-bootstrap`, then
+`omp models aihole-llama` to verify discovery and `omp setup` (or `/model`)
+to make `aihole-llama/qwen38-27b` the default role.
 
 SGLang sidecar (`homeModules/sglang`, max-throughput alternative sharing the
 same 32 GB — don't run both stacks loaded): `sglang-bootstrap`, smoke-test

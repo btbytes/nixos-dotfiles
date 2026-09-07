@@ -193,6 +193,19 @@
       chmod 644 "$DEST"/Qwen3.8-Flash-Next-UD-IQ1_S-*.gguf
       echo "Done. Then: sudo systemctl stop ollama && sudo systemctl start llama-cpp"
     '')
+    # Downloads the Qwen3.8-27B UD-Q6_K_M GGUF (~23.1 GB, single file) for
+    # services.llama-cpp. Run with sudo (writes /var/lib/llama-cpp),
+    # then `sudo systemctl stop ollama && sudo systemctl start llama-cpp`.
+    # Resume-safe (aria2 -c).
+    (writeShellScriptBin "qwen38-27b-download" ''
+      set -euo pipefail
+      DEST="''${QWEN38_27B_DIR:-/var/lib/llama-cpp}"
+      URL="https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/resolve/main/Qwen3.8-27B-UD-Q6_K_M.gguf"
+      mkdir -p "$DEST"
+      ${pkgs.aria2}/bin/aria2c -x 8 -s 8 -c -d "$DEST" -o "Qwen3.8-27B-UD-Q6_K_M.gguf" "$URL"
+      chmod 644 "$DEST"/Qwen3.8-27B-UD-Q6_K_M.gguf
+      echo "Done. Then: sudo systemctl stop ollama && sudo systemctl start llama-cpp"
+    '')
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -298,11 +311,11 @@
   };
 
   # ----------------------------------------------------------------------
-  # llama-server for Qwen3.8-Flash-Next (unsloth UD-IQ1_S, ~72.5 GB).
+  # llama-server for Qwen3.8-27B (unsloth UD-Q6_K_M, ~23.1 GB single file).
   # The nixpkgs llama.cpp snapshot predates the qwen4exp architecture,
-  # so track upstream v0.4.0 with a CUDA build. This is the only quant
-  # fitting the box (62 GB RAM + 32 GB VRAM) and only with Ollama
-  # unloaded — stop it first: `systemctl stop ollama`.
+  # so track upstream v0.4.0 with a CUDA build. Fits in 32 GB VRAM with
+  # room for KV cache at 32k ctx, but only with Ollama unloaded — stop
+  # it first: `systemctl stop ollama`.
   # ----------------------------------------------------------------------
   services.llama-cpp = {
     enable = true;
@@ -327,10 +340,11 @@
     settings = {
       host = "0.0.0.0";
       port = 8090;
-      # Sharded GGUF: point at shard 1, llama.cpp loads the rest from
-      # the same directory. Fetch with `qwen38-download` (below) first;
+      # Single-file GGUF. Fetch with `qwen38-27b-download` first;
       # the service stays skipped until the file exists.
-      model = "/var/lib/llama-cpp/Qwen3.8-Flash-Next-UD-IQ1_S-00001-of-00003.gguf";
+      # `alias` gives a stable /v1/models id for agent routing (omp).
+      model = "/var/lib/llama-cpp/Qwen3.8-27B-UD-Q6_K_M.gguf";
+      alias = "qwen38-27b";
       ctx-size = 32768;
       temp = 0.6;
       top-p = 0.95;
@@ -340,7 +354,7 @@
 
   # Don't crash-loop before the model is downloaded.
   systemd.services.llama-cpp.unitConfig.ConditionPathExists =
-    "/var/lib/llama-cpp/Qwen3.8-Flash-Next-UD-IQ1_S-00001-of-00003.gguf";
+    "/var/lib/llama-cpp/Qwen3.8-27B-UD-Q6_K_M.gguf";
 
   # Serve the model API + chat UI on the tailnet only (aihole-1:
   # 100.101.214.127). Port 30000 belongs to the SGLang router sidecar,
@@ -348,7 +362,7 @@
   networking.firewall.interfaces."tailscale0".allowedTCPPorts = [
     11434 # ollama
     8080 # open-webui
-    8090 # llama-server (Qwen3.8-Flash-Next)
+    8090 # llama-server (Qwen3.8-27B)
     30000 # sglang router (sidecar, off by default)
   ];
 
