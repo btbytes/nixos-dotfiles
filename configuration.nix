@@ -242,8 +242,11 @@
   # ----------------------------------------------------------------------
   # GPU + local LLM serving (RTX 5090, the only VGA device in lspci).
   # ----------------------------------------------------------------------
-  # NVIDIA driver: modesetting for Wayland (Niri/ReGreet), proprietary
-  # module (Blackwell needs a recent driver; nixpkgs carries 595.x).
+  # NVIDIA driver: modesetting for Wayland (Niri/ReGreet), open kernel
+  # module (Blackwell RTX 5090 GB202 10de:2b85 *requires* open; the
+  # proprietary module fails with "Failed to allocate NvKmsKapiDevice",
+  # leaving no /dev/dri/renderD128, so Niri starts with no outputs and
+  # shows a blank screen).
   # persistenced keeps /dev/nvidia* loaded for compute even when no
   # display client is touching the GPU (Ollama/SGLang need this).
   services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
@@ -253,7 +256,7 @@
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = true;
-    open = false;
+    open = true;
     nvidiaSettings = true;
     nvidiaPersistenced = true;
   };
