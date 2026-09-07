@@ -57,11 +57,42 @@ Desktops are mutually exclusive — keep exactly one of
 | `nodejs` | Node 26 + TS tooling (typescript-language-server, eslint, prettier, biome, bun). No toggle — always on. | Frontend work needs this regardless of desktop. |
 | `nh` | `programs.nh` with auto-clean (`--keep-since 24h --keep 5`). | Nice rebuild UX and automatic `/nix/store` hygiene. |
 | `idle` | `services.swayidle`: Noctalia lockscreen after 5 min idle + lock before sleep. | Screen locking on Niri, which has no built-in idle management. |
+| `llmfit` | `llmfit` from nixpkgs (right-sizes LLM models to your RAM/CPU/GPU; `llmfit` TUI, `llmfit fit`, `llmfit recommend`). | Single CLI tool with no config, kept toggleable like the other small modules. |
+| `sglang` | SGLang sidecar: `uv` venv + per-model servers (`:8001`/`:8002`, `--mem-fraction-static` VRAM splits) behind the SGLang router (`:30000`, OpenAI-compatible). Off by default — shares 32 GB VRAM with Ollama. | Max-throughput alternative to Ollama; nixpkgs has no `sglang` package, so it lives in a `uv` venv with pinned Blackwell (sm_120) wheels instead. |
 
 `home.nix` directly manages the rest (no module warranted): bash/zsh
 (Oh-My-Zsh, shared aliases), direnv, fzf, fd, ripgrep, gh, htop, fastfetch,
 tmux, git identity/aliases, Chrome wrapped with
 `--wayland-text-input-version=3` for IBus IME, and the `services.emacs` daemon.
+
+## Local LLM serving (RTX 5090)
+
+Ollama (CUDA, in `configuration.nix`) serves `qwen3:30b`,
+`qwen2.5-coder:14b` and `nomic-embed-text` concurrently with automatic VRAM
+management; Open WebUI is the chat UI. Both listen on the tailnet only
+(aihole-1 `100.101.214.127`):
+
+- API: `http://100.101.214.127:11434` (`/v1/chat/completions` for agents)
+- Chat: `http://100.101.214.127:8080`
+
+```sh
+ollama ps                            # resident models + VRAM usage
+ollama pull <model>                  # one-off pull (loadModels covers the defaults)
+llmfit --memory 32G recommend -n 10  # re-size picks once the driver is live
+```
+
+`llama-server` (`services.llama-cpp` in `configuration.nix`,
+`http://100.101.214.127:8090`) runs Qwen3.8-Flash-Next from the unsloth
+UD-IQ1_S GGUF (~72.5 GB, the only quant fitting 62 GB RAM + 32 GB VRAM).
+nixpkgs' llama.cpp predates the `qwen4exp` architecture, so the service uses
+an upstream v0.4.0 CUDA build. Setup: `sudo qwen38-download`, then
+`sudo systemctl stop ollama && sudo systemctl start llama-cpp` (the Ollama
+stack must be unloaded — the two don't fit in VRAM together).
+
+SGLang sidecar (`homeModules/sglang`, max-throughput alternative sharing the
+same 32 GB — don't run both stacks loaded): `sglang-bootstrap`, smoke-test
+one server, set `sglangModule.enable = true`, rebuild. The router lands on
+`http://100.101.214.127:30000`.
 
 ## Doom Emacs
 

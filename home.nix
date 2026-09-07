@@ -30,6 +30,8 @@ in
     ./homeModules/nixd
     ./homeModules/doom
     ./homeModules/idle
+    ./homeModules/llmfit
+    ./homeModules/sglang
   ];
 
   home.username = my.username;
@@ -51,6 +53,11 @@ in
   nixdModule.enable = true;
   doomModule.enable = true;
   idleModule.enable = true;
+  llmfitModule.enable = true;
+  # SGLang sidecar: off by default — it shares 32 GB VRAM with Ollama, so
+  # enable only when Ollama is unloaded (or shrink memFractionA/B). Setup:
+  # sglang-bootstrap, smoke-test, then flip this to true and rebuild.
+  sglangModule.enable = false;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [

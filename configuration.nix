@@ -174,6 +174,21 @@
         noctalia-shell ipc call toast send "{\"title\":\"Keyboard\",\"body\":\"$label\",\"icon\":\"input-keyboard\",\"duration\":1500}" || true
       fi
     '')
+    # Downloads the Qwen3.8-Flash-Next UD-IQ1_S shards (~72.5 GB) for
+    # services.llama-cpp. Run with sudo (writes /var/lib/llama-cpp),
+    # then `sudo systemctl start llama-cpp`. Resume-safe (aria2 -c).
+    (writeShellScriptBin "qwen38-download" ''
+      set -euo pipefail
+      DEST="''${QWEN38_DIR:-/var/lib/llama-cpp}"
+      BASE="https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/resolve/main/UD-IQ1_S"
+      mkdir -p "$DEST"
+      for i in 1 2 3; do
+        f="Qwen3.8-Flash-Next-UD-IQ1_S-0000$i-of-00003.gguf"
+        ${pkgs.aria2}/bin/aria2c -x 8 -s 8 -c -d "$DEST" -o "$f" "$BASE/$f"
+      done
+      chmod 644 "$DEST"/Qwen3.8-Flash-Next-UD-IQ1_S-*.gguf
+      echo "Done. Then: sudo systemctl stop ollama && sudo systemctl start llama-cpp"
+    '')
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -219,6 +234,116 @@
     enable = true;
     openFirewall = true; # opens UDP 41641, sets reverse-path to loose as needed
   };
+
+  # ----------------------------------------------------------------------
+  # GPU + local LLM serving (RTX 5090, the only VGA device in lspci).
+  # ----------------------------------------------------------------------
+  # NVIDIA driver: modesetting for Wayland (Niri/ReGreet), proprietary
+  # module (Blackwell needs a recent driver; nixpkgs carries 595.x).
+  # persistenced keeps /dev/nvidia* loaded for compute even when no
+  # display client is touching the GPU (Ollama/SGLang need this).
+  services.xserver.videoDrivers = [ "modesetting" "nvidia" ];
+
+  hardware.graphics.enable = true;
+
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    open = false;
+    nvidiaSettings = true;
+    nvidiaPersistenced = true;
+  };
+
+  # Lets uv/pip wheels (SGLang sidecar, homeModules/sglang) resolve their
+  # bundled dynamic libs on NixOS. Declarative packages don't need this.
+  programs.nix-ld.enable = true;
+
+  # Ollama: concurrent multi-model server with CUDA. VRAM is managed
+  # automatically (keep-alive, LRU unload) — no manual VRAM partitioning.
+  # Models pull declaratively at activation (~28 GB first time). Sized for
+  # 32 GB VRAM with `llmfit --memory 32G recommend`; re-run post-rebuild
+  # (GPU visible then) to refine and adjust loadModels.
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-cuda;
+    host = "0.0.0.0";
+    port = 11434;
+    loadModels = [
+      "qwen3:30b"
+      "qwen2.5-coder:14b"
+      "nomic-embed-text"
+    ];
+    environmentVariables = {
+      # Keep models resident for concurrent serving (default unloads
+      # after 5 min idle, which defeats concurrency).
+      OLLAMA_KEEP_ALIVE = "1h";
+    };
+  };
+
+  # Open WebUI: chat UI over the Ollama API (agents use the API directly).
+  services.open-webui = {
+    enable = true;
+    host = "0.0.0.0";
+    port = 8080;
+    environment = {
+      OLLAMA_API_BASE_URL = "http://127.0.0.1:11434";
+    };
+  };
+
+  # ----------------------------------------------------------------------
+  # llama-server for Qwen3.8-Flash-Next (unsloth UD-IQ1_S, ~72.5 GB).
+  # The nixpkgs llama.cpp snapshot predates the qwen4exp architecture,
+  # so track upstream v0.4.0 with a CUDA build. This is the only quant
+  # fitting the box (62 GB RAM + 32 GB VRAM) and only with Ollama
+  # unloaded — stop it first: `systemctl stop ollama`.
+  # ----------------------------------------------------------------------
+  services.llama-cpp = {
+    enable = true;
+    package = (pkgs.llama-cpp.override {
+      cudaSupport = true;
+      cudaPackages = pkgs.cudaPackages;
+    }).overrideAttrs (old: {
+      version = "0.4.0";
+      src = pkgs.fetchFromGitHub {
+        owner = "ggml-org";
+        repo = "llama.cpp";
+        tag = "v0.4.0";
+        hash = "sha256-n540xQnFJOwpyRUXtHrv4/kHU3hguVJQUvanx2ZChR4=";
+        leaveDotGit = true;
+        postFetch = ''
+          git -C "$out" rev-parse --short HEAD > $out/COMMIT
+          find "$out" -name .git -print0 | xargs -0 rm -rf
+        '';
+      };
+      npmDepsHash = "sha256-2Q7XhaLAArmviOLdQsNbYTfdyDE5pW9lR26cRHEVl9k=";
+    });
+    settings = {
+      host = "0.0.0.0";
+      port = 8090;
+      # Sharded GGUF: point at shard 1, llama.cpp loads the rest from
+      # the same directory. Fetch with `qwen38-download` (below) first;
+      # the service stays skipped until the file exists.
+      model = "/var/lib/llama-cpp/Qwen3.8-Flash-Next-UD-IQ1_S-00001-of-00003.gguf";
+      ctx-size = 32768;
+      temp = 0.6;
+      top-p = 0.95;
+      n-gpu-layers = 999;
+    };
+  };
+
+  # Don't crash-loop before the model is downloaded.
+  systemd.services.llama-cpp.unitConfig.ConditionPathExists =
+    "/var/lib/llama-cpp/Qwen3.8-Flash-Next-UD-IQ1_S-00001-of-00003.gguf";
+
+  # Serve the model API + chat UI on the tailnet only (aihole-1:
+  # 100.101.214.127). Port 30000 belongs to the SGLang router sidecar,
+  # which ships disabled (see homeModules/sglang).
+  networking.firewall.interfaces."tailscale0".allowedTCPPorts = [
+    11434 # ollama
+    8080 # open-webui
+    8090 # llama-server (Qwen3.8-Flash-Next)
+    30000 # sglang router (sidecar, off by default)
+  ];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
