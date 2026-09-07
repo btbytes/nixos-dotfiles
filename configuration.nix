@@ -14,7 +14,11 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot.configurationLimit = 3;
+  # The ESP (nvme0n1p1) is only 96 MB and one generation costs ~56 MB
+  # (43 MB initrd + 13 MB kernel), so keep a single boot entry. No
+  # fallback entry — known-good generations stay in the nix store and
+  # can be re-activated with `nixos-rebuild switch --rollback`.
+  boot.loader.systemd-boot.configurationLimit = 1;
 
   networking.hostName = "aihole"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
