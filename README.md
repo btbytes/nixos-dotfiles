@@ -54,7 +54,7 @@ Desktops are mutually exclusive — keep exactly one of
 | `ghostty` | Ghostty terminal + `~/.config/ghostty/config` (FiraCode Nerd Font, Monokai Pro, borderless). | `my.terminal` points here, so all desktop binds open it. |
 | `vesktop` | Vesktop (Discord) with a copied (not symlinked) `settings.json` forcing Wayland/Electron-Ozone flags. `force = true` because the app rewrites this file. | Declarative Wayland flags that survive app restarts. |
 | `nixd` | `nixd` language server + `nixpkgs-fmt`, with `~/.config/nixd/config.json` pointing formatting at `nixpkgs-fmt`. | Editing this repo (and any Nix) with LSP + correct formatter. |
-| `nodejs` | Node 26 + TS tooling (typescript-language-server, eslint, prettier, biome, bun). No toggle — always on. | Frontend work needs this regardless of desktop. |
+| `nodejs` | Node 26 + TS tooling (typescript-language-server, eslint, prettier, biome, bun pinned to 1.4.2 via `overrideAttrs` — nixpkgs lags and `omp` needs ≥ 1.3.14). No toggle — always on. | Frontend work needs this regardless of desktop. |
 | `nh` | `programs.nh` with auto-clean (`--keep-since 24h --keep 5`). | Nice rebuild UX and automatic `/nix/store` hygiene. |
 | `idle` | `services.swayidle`: Noctalia lockscreen after 5 min idle + lock before sleep. | Screen locking on Niri, which has no built-in idle management. |
 | `llmfit` | `llmfit` from nixpkgs (right-sizes LLM models to your RAM/CPU/GPU; `llmfit` TUI, `llmfit fit`, `llmfit recommend`). | Single CLI tool with no config, kept toggleable like the other small modules. |
