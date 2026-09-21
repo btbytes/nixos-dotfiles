@@ -34,6 +34,8 @@ in
     ./homeModules/sglang
     ./homeModules/omp
     ./homeModules/rclone
+    ./homeModules/gemini-cli
+    ./homeModules/muse
   ];
 
   home.username = my.username;
@@ -63,7 +65,11 @@ in
   # oh-my-pi agent (omp): needs `omp-bootstrap` once (bun global install)
   # plus a running llama-server behind it.
   rcloneModule.enable = true;
+  gemini-cliModule.enable = true;
   ompModule.enable = true;
+  # Meta Muse agent: needs `muse-bootstrap` once (upstream curl|bash
+  # installer → ~/.local/bin/muse; PATH handled by Home Manager).
+  museModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [

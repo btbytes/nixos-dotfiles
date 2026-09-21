@@ -61,6 +61,8 @@ Desktops are mutually exclusive — keep exactly one of
 | `sglang` | SGLang sidecar: `uv` venv + per-model servers (`:8001`/`:8002`, `--mem-fraction-static` VRAM splits) behind the SGLang router (`:30000`, OpenAI-compatible). Off by default — shares 32 GB VRAM with Ollama. | Max-throughput alternative to Ollama; nixpkgs has no `sglang` package, so it lives in a `uv` venv with pinned Blackwell (sm_120) wheels instead. |
 | `omp` | oh-my-pi (`omp`) coding agent: `omp-bootstrap` installs via Bun (no nixpkgs package), `~/.omp/agent/models.yml` declares the local llama-server as an OpenAI-compatible provider. | Agent harness kept toggleable; model routing is a config file, not a package. |
 | `rclone` | `programs.rclone` (cloud storage sync for Drive, S3, Dropbox etc.). | Single CLI tool with Home Manager module for completions and declarative remotes. |
+| `gemini-cli` | Google's Gemini CLI agent from nixpkgs (replaced upstream by Antigravity CLI — pinned package still installs). | CLI agent with no dotfiles, kept toggleable like other small tools. |
+| `muse` | Meta Muse coding agent via the upstream installer (`curl https://dev.meta.ai/install.sh \| bash` inside `muse-bootstrap`); launcher lands in `~/.local/bin`, put on PATH by Home Manager — the installer never edits shell rc files. | nixpkgs has no Meta Muse package (its `muse` is a MIDI sequencer) and the agent has no dotfiles, so it boils down to one bootstrap script + a PATH entry, kept toggleable like `omp`. |
 
 `home.nix` directly manages the rest (no module warranted): bash/zsh
 (Oh-My-Zsh, shared aliases), direnv, fzf, fd, ripgrep, gh, htop, fastfetch,
@@ -140,6 +142,7 @@ nh os switch ~/dotfiles              # same, via nh
 nix flake update <input>             # bump one input, then rebuild
 nixpkgs-fmt --check <file>           # repo formatter is nixpkgs-fmt, NOT nixfmt
 git add <new-files>                  # required: flakes ignore untracked files
+muse-bootstrap                       # one-time: install Meta Muse (→ ~/.local/bin/muse)
 ```
 
 Adding a module: create `homeModules/<name>/default.nix` following the
