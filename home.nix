@@ -33,6 +33,7 @@ in
     ./homeModules/llmfit
     ./homeModules/sglang
     ./homeModules/omp
+    ./homeModules/rclone
   ];
 
   home.username = my.username;
@@ -61,6 +62,7 @@ in
   sglangModule.enable = false;
   # oh-my-pi agent (omp): needs `omp-bootstrap` once (bun global install)
   # plus a running llama-server behind it.
+  rcloneModule.enable = true;
   ompModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.

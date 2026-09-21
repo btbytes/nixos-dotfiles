@@ -60,6 +60,7 @@ Desktops are mutually exclusive — keep exactly one of
 | `llmfit` | `llmfit` from nixpkgs (right-sizes LLM models to your RAM/CPU/GPU; `llmfit` TUI, `llmfit fit`, `llmfit recommend`). | Single CLI tool with no config, kept toggleable like the other small modules. |
 | `sglang` | SGLang sidecar: `uv` venv + per-model servers (`:8001`/`:8002`, `--mem-fraction-static` VRAM splits) behind the SGLang router (`:30000`, OpenAI-compatible). Off by default — shares 32 GB VRAM with Ollama. | Max-throughput alternative to Ollama; nixpkgs has no `sglang` package, so it lives in a `uv` venv with pinned Blackwell (sm_120) wheels instead. |
 | `omp` | oh-my-pi (`omp`) coding agent: `omp-bootstrap` installs via Bun (no nixpkgs package), `~/.omp/agent/models.yml` declares the local llama-server as an OpenAI-compatible provider. | Agent harness kept toggleable; model routing is a config file, not a package. |
+| `rclone` | `programs.rclone` (cloud storage sync for Drive, S3, Dropbox etc.). | Single CLI tool with Home Manager module for completions and declarative remotes. |
 
 `home.nix` directly manages the rest (no module warranted): bash/zsh
 (Oh-My-Zsh, shared aliases), direnv, fzf, fd, ripgrep, gh, htop, fastfetch,
