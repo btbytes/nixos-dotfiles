@@ -93,6 +93,8 @@ nixpkgs' llama.cpp predates the `qwen4exp` architecture, so the service uses
 an upstream v0.4.0 CUDA build. Setup: `sudo qwen38-27b-download`, then
 `sudo systemctl stop ollama && sudo systemctl start llama-cpp` (the Ollama
 stack must be unloaded — the two don't fit in VRAM together).
+**Currently disabled** (`enable = false`) — Qwen runs under Unsloth instead;
+the config and the GGUF in `/var/lib/llama-cpp` are kept for re-enabling.
 
 `omp` (`homeModules/omp`) drives that server: `omp-bootstrap`, then
 `omp models aihole-llama` to verify discovery and `omp setup` (or `/model`)
@@ -147,7 +149,7 @@ muse-bootstrap                       # one-time: install Meta Muse (→ ~/.local
 unsloth-bootstrap                    # install / update Unsloth Studio & CLI (~/.unsloth/studio)
 unsloth doctor                       # verify PyTorch, CUDA (sm_120) and RTX 5090 detection
 unsloth studio                       # start Unsloth Studio web UI on :8888 (or open Unsloth Desktop)
-systemctl --user status unsloth-studio # background Studio service status (starts on login)
+systemctl --user status unsloth-studio # background Studio service (0.0.0.0:8888, firewall: tailnet only)
 ```
 
 Adding a module: create `homeModules/<name>/default.nix` following the

@@ -76,6 +76,8 @@ in
   # autoStart runs Unsloth Studio in the background as a systemd user service on login.
   unslothModule.enable = true;
   unslothModule.autoStart = true;
+  # Listen on all interfaces; the firewall only opens :8888 on tailscale0.
+  unslothModule.host = "0.0.0.0";
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [

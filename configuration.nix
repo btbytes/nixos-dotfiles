@@ -316,9 +316,11 @@
   # so track upstream v0.4.0 with a CUDA build. Fits in 32 GB VRAM with
   # room for KV cache at 32k ctx, but only with Ollama unloaded — stop
   # it first: `systemctl stop ollama`.
+  # Disabled: Qwen now runs under Unsloth. Config and the GGUF in
+  # /var/lib/llama-cpp are kept — flip `enable` back to re-use them.
   # ----------------------------------------------------------------------
   services.llama-cpp = {
-    enable = true;
+    enable = false;
     package = (pkgs.llama-cpp.override {
       cudaSupport = true;
       cudaPackages = pkgs.cudaPackages;
@@ -353,8 +355,10 @@
   };
 
   # Don't crash-loop before the model is downloaded.
-  systemd.services.llama-cpp.unitConfig.ConditionPathExists =
-    "/var/lib/llama-cpp/Qwen3.8-27B-UD-Q6_K_M.gguf";
+  systemd.services.llama-cpp = pkgs.lib.mkIf config.services.llama-cpp.enable {
+    unitConfig.ConditionPathExists =
+      "/var/lib/llama-cpp/Qwen3.8-27B-UD-Q6_K_M.gguf";
+  };
 
   # Serve the model API + chat UI on the tailnet only (aihole-1:
   # 100.101.214.127). Port 30000 belongs to the SGLang router sidecar,
@@ -363,6 +367,7 @@
     11434 # ollama
     8080 # open-webui
     8090 # llama-server (Qwen3.8-27B)
+    8888 # unsloth studio
     30000 # sglang router (sidecar, off by default)
   ];
 
