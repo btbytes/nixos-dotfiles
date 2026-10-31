@@ -36,6 +36,7 @@ in
     ./homeModules/rclone
     ./homeModules/antigravity-cli
     ./homeModules/muse
+    ./homeModules/unsloth
   ];
 
   home.username = my.username;
@@ -70,6 +71,9 @@ in
   # Meta Muse agent: needs `muse-bootstrap` once (upstream curl|bash
   # installer → ~/.local/bin/muse; PATH handled by Home Manager).
   museModule.enable = true;
+  # Unsloth AI Studio & Desktop: provides unsloth-desktop (Tauri AppImage)
+  # and unsloth CLI/Studio with Blackwell sm_120 CUDA support.
+  unslothModule.enable = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [

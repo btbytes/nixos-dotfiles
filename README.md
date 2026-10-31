@@ -63,6 +63,7 @@ Desktops are mutually exclusive — keep exactly one of
 | `rclone` | `programs.rclone` (cloud storage sync for Drive, S3, Dropbox etc.). | Single CLI tool with Home Manager module for completions and declarative remotes. |
 | `antigravity-cli` | Antigravity CLI agent from nixpkgs. | CLI agent with no dotfiles, kept toggleable like other small tools. |
 | `muse` | Meta Muse coding agent via the upstream installer (`curl https://dev.meta.ai/install.sh \| bash` inside `muse-bootstrap`); launcher lands in `~/.local/bin`, put on PATH by Home Manager — the installer never edits shell rc files. | nixpkgs has no Meta Muse package (its `muse` is a MIDI sequencer) and the agent has no dotfiles, so it boils down to one bootstrap script + a PATH entry, kept toggleable like `omp`. |
+| `unsloth` | Unsloth AI Studio & Desktop: `unsloth-desktop` (Tauri AppImage with nghttp2, desktop entry, icon) + `unsloth-bootstrap` for Unsloth Studio (`~/.unsloth/studio`) with Blackwell (sm_120) CUDA and SSL certificates. | Local fine-tuning and model management platform; wraps the upstream desktop AppImage and manages the Python CUDA environment on NixOS. |
 
 `home.nix` directly manages the rest (no module warranted): bash/zsh
 (Oh-My-Zsh, shared aliases), direnv, fzf, fd, ripgrep, gh, htop, fastfetch,
@@ -143,6 +144,9 @@ nix flake update <input>             # bump one input, then rebuild
 nixpkgs-fmt --check <file>           # repo formatter is nixpkgs-fmt, NOT nixfmt
 git add <new-files>                  # required: flakes ignore untracked files
 muse-bootstrap                       # one-time: install Meta Muse (→ ~/.local/bin/muse)
+unsloth-bootstrap                    # install / update Unsloth Studio & CLI (~/.unsloth/studio)
+unsloth doctor                       # verify PyTorch, CUDA (sm_120) and RTX 5090 detection
+unsloth studio                       # start Unsloth Studio web UI on :8888 (or open Unsloth Desktop)
 ```
 
 Adding a module: create `homeModules/<name>/default.nix` following the
