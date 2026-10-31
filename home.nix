@@ -34,7 +34,7 @@ in
     ./homeModules/sglang
     ./homeModules/omp
     ./homeModules/rclone
-    ./homeModules/gemini-cli
+    ./homeModules/antigravity-cli
     ./homeModules/muse
   ];
 
@@ -65,7 +65,7 @@ in
   # oh-my-pi agent (omp): needs `omp-bootstrap` once (bun global install)
   # plus a running llama-server behind it.
   rcloneModule.enable = true;
-  gemini-cliModule.enable = true;
+  antigravity-cliModule.enable = true;
   ompModule.enable = true;
   # Meta Muse agent: needs `muse-bootstrap` once (upstream curl|bash
   # installer → ~/.local/bin/muse; PATH handled by Home Manager).
