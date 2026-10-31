@@ -26,7 +26,27 @@ let
   };
 in
 {
-  options.unslothModule.enable = lib.mkEnableOption "Unsloth AI Studio & Desktop environment";
+  options.unslothModule = {
+    enable = lib.mkEnableOption "Unsloth AI Studio & Desktop environment";
+
+    autoStart = lib.mkOption {
+      type = lib.types.bool;
+      default = true;
+      description = "Automatically start Unsloth Studio in the background on user login as a systemd user service.";
+    };
+
+    host = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Bind host address for Unsloth Studio.";
+    };
+
+    port = lib.mkOption {
+      type = lib.types.port;
+      default = 8888;
+      description = "Listen port for Unsloth Studio.";
+    };
+  };
 
   config = lib.mkIf cfg.enable {
     home.packages = [
@@ -60,5 +80,34 @@ in
     };
 
     home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
+
+    systemd.user.services.unsloth-studio = lib.mkIf cfg.autoStart {
+      Unit = {
+        Description = "Unsloth Studio inference server";
+        Documentation = [ "https://github.com/unslothai/unsloth" ];
+        After = [ "network-online.target" ];
+        Wants = [ "network-online.target" ];
+        ConditionPathExists = [ "${config.home.homeDirectory}/.unsloth/studio/unsloth_studio/bin/unsloth" ];
+      };
+
+      Service = {
+        Type = "simple";
+        ExecStart = "${config.home.homeDirectory}/.unsloth/studio/unsloth_studio/bin/unsloth studio -H ${cfg.host} -p ${toString cfg.port}";
+        Environment = [
+          "LD_LIBRARY_PATH=/run/current-system/sw/share/nix-ld/lib:/run/opengl-driver/lib"
+          "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+          "PATH=${lib.makeBinPath [ pkgs.coreutils pkgs.bash pkgs.curl pkgs.git pkgs.procps ]}:/run/current-system/sw/bin:${config.home.homeDirectory}/.local/bin"
+          "UNSLOTH_STUDIO_HOME=${config.home.homeDirectory}/.unsloth/studio"
+        ];
+        Restart = "on-failure";
+        RestartSec = 10;
+        KillMode = "mixed";
+        TimeoutStopSec = 120;
+      };
+
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
   };
 }

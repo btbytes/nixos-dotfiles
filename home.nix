@@ -73,7 +73,9 @@ in
   museModule.enable = true;
   # Unsloth AI Studio & Desktop: provides unsloth-desktop (Tauri AppImage)
   # and unsloth CLI/Studio with Blackwell sm_120 CUDA support.
+  # autoStart runs Unsloth Studio in the background as a systemd user service on login.
   unslothModule.enable = true;
+  unslothModule.autoStart = true;
 
   # Packages that have no dedicated home-manager module live here.
   home.packages = with pkgs; [
